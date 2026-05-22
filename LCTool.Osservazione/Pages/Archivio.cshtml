@@ -1,0 +1,114 @@
+@page "/Archivio"
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivio Osservazioni</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/osservazione.css" />
+    <script>window.APP_BASE_URL = '@Url.Content("~/")';</script>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-logo-dot">
+                    <img src="~/assets/Logo_TP.png" alt="TP" class="header-dot-logo" />
+                </div>
+                <h1>Osservazione</h1>
+            </div>
+            <div class="header-right">
+                <partial name="_CurrentUserBadge" />
+                <a href="@Url.Page("/Index")" class="icon-btn" title="Home">
+                    <img src="~/assets/home.png" alt="Home" />
+                </a>
+                <a href="@Url.Page("/NuovaOsservazione")" class="icon-btn" title="Nuova Osservazione">
+                    <img src="~/assets/new-document.png" alt="Nuova Osservazione" />
+                </a>
+                <span class="pill-btn counter-btn" id="btnCounter" style="display:none">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                    </svg>
+                    <span id="obsCount">0</span> OBS
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="archivio-header">
+            <h2>Archivio Osservazioni</h2>
+            <p class="archivio-sub">Filtra le Osservazioni usando i campi sottostanti.</p>
+
+            <div style="background:white;border-radius:12px;padding:20px 24px;
+                        margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;">
+                    <div>
+                        <label style="display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px;">Numero</label>
+                        <input type="text" id="filtroNumero" placeholder="Es. 1"
+                               style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;" />
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px;">Stato</label>
+                        <select id="filtroStato"
+                                style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;background:white;box-sizing:border-box;">
+                            <option value="">— Tutti —</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px;">Rilevata da</label>
+                        <select id="filtroRilevataDa"
+                                style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;background:white;box-sizing:border-box;">
+                            <option value="">— Tutte —</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;">
+                    <div>
+                        <label style="display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px;">Owner</label>
+                        <input type="text" id="filtroOwner" placeholder="Es. Mario Rossi"
+                               style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;" />
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px;">Aperta dal</label>
+                        <input type="date" id="filtroDataDal"
+                               style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;" />
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px;">Aperta al</label>
+                        <input type="date" id="filtroDataAl"
+                               style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;" />
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:12px;align-items:center;">
+                    <button class="btn primary"   id="btnRicerca">🔍 Ricerca</button>
+                    <button class="btn secondary" id="btnPulisci">Pulisci filtri</button>
+                    <button class="btn secondary" id="btnAggiorna">Aggiorna</button>
+                    <span id="risultatiCount" style="margin-left:auto;font-size:13px;color:#666;"></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="archivioCards" class="archivio-grid"></div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="~/js/obs-common.js"></script>
+    <script src="~/js/archivio.js"></script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+@page "/NuovaOsservazione"
+@{
+    Layout = null;
+    int? obsIdRoute = null;
+    if (int.TryParse(Request.Query["id"].FirstOrDefault(), out var parsedId))
+    {
+        obsIdRoute = parsedId;
+    }
+}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(obsIdRoute.HasValue ? "Revisiona" : "Nuova") Osservazione</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/osservazione.css" />
+    <script>
+        window.APP_BASE_URL = '@Url.Content("~/")';
+        window.OBS_EDIT_ID = @(obsIdRoute.HasValue ? obsIdRoute.Value.ToString() : "null");
+    </script>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-logo-dot">
+                    <img src="~/assets/Logo_TP.png" alt="TP" class="header-dot-logo" />
+                </div>
+                <h1>Osservazione</h1>
+            </div>
+            <div class="header-right">
+                <partial name="_CurrentUserBadge" />
+                <a href="@Url.Page("/Index")" class="icon-btn" title="Home">
+                    <img src="~/assets/home.png" alt="Home" />
+                </a>
+                <a href="@Url.Page("/Archivio")" class="icon-btn" title="Cerca Osservazione">
+                    <img src="~/assets/search.png" alt="Cerca" />
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <div class="steps">
+            <div class="stepchip active" data-step="1"><span class="num">1</span> Intestazione</div>
+            <div class="stepchip"        data-step="2"><span class="num">2</span> Dettagli CNC</div>
+            <div class="stepchip"        data-step="3"><span class="num">3</span> Riepilogo</div>
+        </div>
+
+        <div id="numeroBadge" class="nc-numero-badge" style="display:none">
+            OBS #<span id="obsNumeroDisplay"></span>
+        </div>
+
+        <form id="obsForm" autocomplete="off" novalidate>
+            <input type="hidden" id="obsId" />
+
+            <!-- STEP 1: INTESTAZIONE -->
+            <div class="card step-panel" id="step1">
+                <div class="card-header"><h2>Intestazione</h2></div>
+                <p class="step-desc">
+                    Compila i dati di intestazione. I campi con asterisco (*) sono obbligatori.
+                </p>
+
+                <div style="margin-bottom:20px">
+                    <label>Numero Osservazione <span class="req">*</span></label>
+                    <input type="text" id="numeroObsDisplay" disabled style="background:#f5f5f5;cursor:not-allowed;" />
+                    <span class="field-hint">Codice progressivo generato dal sistema (non modificabile)</span>
+                </div>
+
+                <div class="grid grid-2">
+                    <div>
+                        <label>Stato <span class="req">*</span></label>
+                        <select id="stato"><option value="">— Seleziona —</option></select>
+                    </div>
+                    <div>
+                        <label>ISO / Norma di Riferimento <span class="req">*</span>
+                            <span class="info-icon" title="Inserire il riferimento normativo ISO">ℹ</span>
+                        </label>
+                        <input type="text" id="isoRiferimento" name="iso_x"
+                               placeholder="es. ISO 9001:2015 § 8.7" maxlength="500" autocomplete="off"
+                               readonly onfocus="this.removeAttribute('readonly')" />
+                    </div>
+                </div>
+                <div class="grid grid-2">
+                    <div>
+                        <label>Item di Riferimento <span class="req">*</span></label>
+                        <input type="text" id="itemRiferimento" name="item_x"
+                               autocomplete="off" readonly onfocus="this.removeAttribute('readonly')" />
+                    </div>
+                    <div>
+                        <label>Rilevata da <span class="req">*</span></label>
+                        <select id="rilevataDa"><option value="">— Seleziona —</option></select>
+                    </div>
+                </div>
+                <div class="grid grid-3">
+                    <div><label>Data Apertura <span class="req">*</span></label>
+                        <input type="date" id="dataApertura" name="dap_x" /></div>
+                    <div><label>Data Prevista Chiusura <span class="req">*</span></label>
+                        <input type="date" id="dataPrevistaChiusura" name="dpc_x" /></div>
+                    <div><label>Data Effettiva Chiusura</label>
+                        <input type="date" id="dataEffettivaChiusura" name="dec_x" /></div>
+                </div>
+
+                <div class="step-actions">
+                    <button type="button" class="btn primary" id="btnStep1Next">Avanti →</button>
+                </div>
+            </div>
+
+            <!-- STEP 2: DETTAGLI CNC -->
+            <div class="card step-panel" id="step2" style="display:none">
+                <div class="card-header"><h2>Dettagli CNC</h2></div>
+                <p class="step-desc">
+                    Compila i dettagli dell'Osservazione. I campi con asterisco (*) sono obbligatori.
+                </p>
+                <div style="margin-bottom:20px">
+                    <label>Descrizione <span class="req">*</span></label>
+                    <textarea id="descrizione" name="desc_x"
+                              placeholder="Descrizione dell'osservazione rilevata"></textarea>
+                </div>
+                <div style="margin-bottom:20px">
+                    <label>Causa <span class="req">*</span></label>
+                    <textarea id="causa" name="causa_x"
+                              placeholder="Causa radice dell'osservazione"></textarea>
+                </div>
+                <div style="margin-bottom:20px">
+                    <label>Owner <span class="req">*</span> <small>(Invio per aggiungere)</small></label>
+                    <div class="tag-input-wrap" id="ownerWrap">
+                        <div id="ownerTags"></div>
+                        <input type="text" id="ownerInput" name="owner_x"
+                               placeholder="Digita un nome e premi Invio…" autocomplete="new-password" />
+                    </div>
+                    <input type="hidden" id="ownerValue" />
+                </div>
+                <div style="margin-bottom:20px">
+                    <label>Azioni Correttive</label>
+                    <textarea id="azioniCorrettive" name="azioni_x"
+                              placeholder="Azioni correttive pianificate / attuate"></textarea>
+                </div>
+                <div style="margin-bottom:20px">
+                    <label>Doc SGQ Modificati</label>
+                    <input type="text" id="docSgqModificati" name="docsgq_x"
+                           placeholder="Documenti SGQ modificati" maxlength="1000" autocomplete="off"
+                           readonly onfocus="this.removeAttribute('readonly')" />
+                </div>
+
+                <div id="revizioneSection" style="display:none">
+                    <div class="section-title">Revisione</div>
+                    <div class="grid grid-2" style="margin-bottom:20px">
+                        <div>
+                            <label>Data Revisione</label>
+                            <input type="date" id="dataRevisione" name="drev_x" />
+                        </div>
+                        <div></div>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <label>Note Revisione <small>(testo libero)</small></label>
+                        <textarea id="noteRevisione" name="noterev_x" rows="4"
+                                  placeholder="Note di revisione"></textarea>
+                    </div>
+                </div>
+
+                <div class="step-actions">
+                    <button type="button" class="btn secondary" id="btnStep2Back">← Indietro</button>
+                    <button type="button" class="btn primary"   id="btnStep2Next">Avanti →</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: RIEPILOGO -->
+            <div class="card step-panel" id="step3" style="display:none">
+                <div class="card-header"><h2>Riepilogo</h2></div>
+                <p class="step-desc">Verifica i dati inseriti prima di salvare l'Osservazione.</p>
+
+                <div class="recap-section">
+                    <div class="recap-head">
+                        <h3>Intestazione</h3>
+                        <button type="button" class="btn secondary btn-sm" onclick="goToStep(1)">Modifica</button>
+                    </div>
+                    <div class="recap-grid">
+                        <div class="recap-kv"><span class="k">Numero</span><span class="v" id="r_numero">—</span></div>
+                        <div class="recap-kv"><span class="k">Stato</span><span class="v" id="r_stato">—</span></div>
+                        <div class="recap-kv"><span class="k">ISO / Norma</span><span class="v" id="r_iso">—</span></div>
+                        <div class="recap-kv"><span class="k">Item di Riferimento</span><span class="v" id="r_item">—</span></div>
+                        <div class="recap-kv"><span class="k">Rilevata da</span><span class="v" id="r_rilevata">—</span></div>
+                        <div class="recap-kv"><span class="k">Data Apertura</span><span class="v" id="r_dataAp">—</span></div>
+                        <div class="recap-kv"><span class="k">Data Prevista Chiusura</span><span class="v" id="r_dataPrev">—</span></div>
+                        <div class="recap-kv"><span class="k">Data Effettiva Chiusura</span><span class="v" id="r_dataEff">—</span></div>
+                    </div>
+                </div>
+
+                <div class="recap-section">
+                    <div class="recap-head">
+                        <h3>Dettagli CNC</h3>
+                        <button type="button" class="btn secondary btn-sm" onclick="goToStep(2)">Modifica</button>
+                    </div>
+                    <div class="recap-grid">
+                        <div class="recap-kv recap-full"><span class="k">Descrizione</span><span class="v" id="r_desc">—</span></div>
+                        <div class="recap-kv recap-full"><span class="k">Causa</span><span class="v" id="r_causa">—</span></div>
+                        <div class="recap-kv"><span class="k">Owner</span><span class="v" id="r_owner">—</span></div>
+                        <div class="recap-kv recap-full"><span class="k">Azioni Correttive</span><span class="v" id="r_azioni">—</span></div>
+                        <div class="recap-kv recap-full"><span class="k">Doc SGQ Modificati</span><span class="v" id="r_docsgq">—</span></div>
+                    </div>
+                </div>
+
+                <div id="riepilogoRevizioneSection" style="display:none">
+                    <div class="recap-section">
+                        <div class="recap-head">
+                            <h3>Revisione</h3>
+                            <button type="button" class="btn secondary btn-sm" onclick="goToStep(2)">Modifica</button>
+                        </div>
+                        <div class="recap-grid">
+                            <div class="recap-kv"><span class="k">Data Revisione</span><span class="v" id="r_dataRev">—</span></div>
+                            <div class="recap-kv recap-full"><span class="k">Note Revisione</span><span class="v" id="r_noteRev">—</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-actions">
+                    <button type="button" class="btn secondary" id="btnStep3Back">← Indietro</button>
+                    <button type="button" class="btn primary"   id="btnSalva">💾 Salva</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Pannello SUCCESSO -->
+        <div id="panelSuccesso" style="display:none">
+            <div class="card" style="max-width:600px;margin:60px auto;text-align:center;padding:60px 48px;">
+                <div style="margin-bottom:24px">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#111"
+                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                </div>
+                <h2 id="successoTitolo" style="font-size:22px;font-weight:700;margin-bottom:12px;color:#111">
+                    Operazione completata
+                </h2>
+                <p style="color:#666;font-size:15px;margin-bottom:32px;">
+                    L'Osservazione è stata salvata correttamente.
+                </p>
+                <div style="display:flex;gap:12px;justify-content:center;">
+                    <a href="@Url.Page("/Archivio")" class="btn secondary">🔍 Vai all'Archivio</a>
+                    <a href="@Url.Page("/NuovaOsservazione")" class="btn primary">+ Nuova Osservazione</a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="~/js/obs-common.js"></script>
+    <script src="~/js/nuova-obs.js"></script>
+</body>
+</html>
