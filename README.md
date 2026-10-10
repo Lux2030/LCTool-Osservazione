@@ -1,82 +1,32 @@
-\# LCTool-Osservazione
+## Requisiti per l'uso
+
+- Windows 10/11 a 64 bit
+- SQL Server LocalDB (incluso in Visual Studio, oppure installabile come SQL Server Express LocalDB)
+- Un account Windows con password (il tool usa l'accesso di Windows)
+
+## Primo avvio
+
+Al primo avvio il database `LCToolDb` viene creato automaticamente, con le tabelle e le voci delle liste (Stato e Rilevata da). Non serve eseguire script.
 
 
+## Per sviluppatori
 
-Tool per la gestione delle Osservazioni, sviluppato in ASP.NET Core 9.
-
-
-
-\## Requisiti
-
-
-
-\- \[.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
-
-\- \[Git](https://git-scm.com)
-
-\- (Opzionale) Visual Studio 2022 con il carico di lavoro "ASP.NET e sviluppo web"
-
-
-
-\## Installazione e avvio
-
-
-
-1\. Clona il repository:
-
-
+1. Clona il repository:
 
 ```bash
-
-&#x20;  git clone https://github.com/Lux2030/LCTool-Osservazione.git
-
-&#x20;  cd LCTool-Osservazione
-
+   git clone https://github.com/Lux2030/LCTool-Osservazione.git
+   cd LCTool-Osservazione
 ```
 
-
-
-2\. Ripristina le dipendenze e compila:
-
-
+2. Ripristina le dipendenze e compila:
 
 ```bash
-
-&#x20;  dotnet restore
-
-&#x20;  dotnet build
-
+   dotnet restore
+   dotnet build
 ```
 
-
-
-3\. Avvia l'applicazione:
-
-
+3. Avvia l'applicazione:
 
 ```bash
-
-&#x20;  dotnet run --project LCTool.Osservazione
-
+   dotnet run --project LCTool.Osservazione
 ```
-
-
-
-4\. Apri nel browser l'indirizzo mostrato nel terminale (es. `https://localhost:7xxx`).
-
-
-
-\## Oppure con Visual Studio
-
-
-
-Apri `LCTool.Osservazione.sln` e premi \*\*F5\*\*.
-
-
-
-\## Autore
-
-
-
-Lux2030
-
