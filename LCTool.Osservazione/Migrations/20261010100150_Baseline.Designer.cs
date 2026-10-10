@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LCTool.Osservazione.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260505151644_FixAuditColumnsOnOsservazioni")]
-    partial class FixAuditColumnsOnOsservazioni
+    [Migration("20261010100150_Baseline")]
+    partial class Baseline
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

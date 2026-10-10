@@ -1,4 +1,5 @@
 using LCTool.Osservazione.Data;
+using LCTool.Osservazione.Models;
 using LCTool.Osservazione.Services;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.EntityFrameworkCore;
